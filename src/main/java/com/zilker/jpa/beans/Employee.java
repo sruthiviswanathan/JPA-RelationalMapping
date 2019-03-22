@@ -1,11 +1,16 @@
 package com.zilker.jpa.beans;
 
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -40,6 +45,13 @@ public class Employee {
 	@OneToOne(cascade=CascadeType.REMOVE)
 	@JoinColumn(name="address_id")
 	private Address address;
+	
+	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name="employee_specialty",  joinColumns=@JoinColumn(name="employee_id",referencedColumnName="id"),
+	inverseJoinColumns= @JoinColumn(name="specialty_id", referencedColumnName="id"))
+	private Set<Speciality> specialityList;
+	
 	
 	public int getId() {
 		return id;
@@ -96,6 +108,12 @@ public class Employee {
 		return "Employee [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
 				+ ", phoneNumber=" + phoneNumber + ", salary=" + salary + ", department=" + department + ", address="
 				+ address + "]";
+	}
+	public Set<Speciality> getSpecialityList() {
+		return specialityList;
+	}
+	public void setSpecialityList(Set<Speciality> specialityList) {
+		this.specialityList = specialityList;
 	}
 	
 	

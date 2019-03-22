@@ -11,11 +11,13 @@ import org.springframework.stereotype.Repository;
 import com.zilker.jpa.beans.Address;
 import com.zilker.jpa.beans.Department;
 import com.zilker.jpa.beans.Employee;
+import com.zilker.jpa.beans.Speciality;
 import com.zilker.jpa.customException.ApplicationException;
 import com.zilker.jpa.customException.EmailAlreadyExistsException;
 import com.zilker.jpa.repository.AddressRepository;
 import com.zilker.jpa.repository.DepartmentRepository;
 import com.zilker.jpa.repository.EmployeeRepository;
+import com.zilker.jpa.repository.SpecialityRepository;
 
 
 @Repository
@@ -27,12 +29,15 @@ public class EmployeeDao {
 	private AddressRepository addressRepository;
 	@Autowired
 	private DepartmentRepository departmentRepository;
+	@Autowired
+	private SpecialityRepository specialtyRepository;
 	
 	public Employee registerEmployee(Employee employee)throws ApplicationException {
 		// TODO Auto-generated method stub
 		Employee employees = new Employee();
 		Address address = new Address();
 		Department department = new Department();
+		Speciality specialty = new Speciality();
 		boolean flag=false;
 		boolean emailExists=false;
 		try {
@@ -40,10 +45,13 @@ public class EmployeeDao {
 			if(emailExists) {
 				throw new EmailAlreadyExistsException();
 			}else {
-			flag = departmentRepository.existsByName(employee.getDepartment().getName());
+				flag = departmentRepository.existsByName(employee.getDepartment().getName());
 			if(flag) {
 				department=departmentRepository.findByName(employee.getDepartment().getName());
 				address = addressRepository.save(employee.getAddress());
+				System.out.println(employee.getSpecialityList());
+				specialty = specialtyRepository.findByName(employee.getSpecialityList());
+				System.out.println(specialty.getId());
 				employee.setDepartment(department);
 				employee.setAddress(address);	
 				employees = employeeRepository.save(employee);
@@ -53,9 +61,11 @@ public class EmployeeDao {
 			}
 			
 			}catch(EmailAlreadyExistsException e) {
+				System.out.println(e);
 				throw e;
 			}
 			catch(Exception e) {
+				System.out.println(e);
 				throw new ApplicationException("SQL_EXP","SQLException");
 			
 			}

@@ -1,32 +1,43 @@
 package com.zilker.jpa.beans;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="employee_specialty")
-@IdClass(EmployeeSplKey.class)
 public class EmployeeSpeciality {
 
-	@Id
-	private int employeeId;
-	@Id
-	private int specialtyId;
+	 @EmbeddedId
+	 EmployeeSplKey id;
 	
-	public int getEmployeeId() {
-		return employeeId;
+	@ManyToOne
+	@JoinColumn(name="employee_id",insertable=false,updatable=false)
+	private Employee employee;
+	
+	@ManyToOne
+	@JoinColumn(name="specialty_id",insertable=false,updatable=false)
+	private Speciality speciality;
+
+	public Employee getEmployee() {
+		return employee;
 	}
-	public void setEmployeeId(int employeeId) {
-		this.employeeId = employeeId;
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
 	}
-	public int getSpecialtyId() {
-		return specialtyId;
+
+	public Speciality getSpeciality() {
+		return speciality;
 	}
-	public void setSpecialtyId(int specialtyId) {
-		this.specialtyId = specialtyId;
+
+	public void setSpeciality(Speciality speciality) {
+		this.speciality = speciality;
 	}
+	
+	
 	
 	
 	
