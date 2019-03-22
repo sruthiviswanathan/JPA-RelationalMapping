@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zilker.jpa.beans.Employee;
+import com.zilker.jpa.beans.Speciality;
 import com.zilker.jpa.customException.ApplicationException;
 import com.zilker.jpa.delegate.EmployeeDelegate;
 import com.zilker.jpa.utils.ResponseGeneratorUtil;
@@ -33,6 +34,7 @@ public class EmployeeController {
 		
 		try {
 		employees  = employeeDelegate.registerEmployee(employee);
+		
 		return reponseGeneratorUtil.successResponse(employees);		
 		
 		}catch(ApplicationException e) {
@@ -93,6 +95,23 @@ public class EmployeeController {
 		
 		}catch(ApplicationException e) {
 			return reponseGeneratorUtil.errorResponse(e);
+		}
+		
+	}
+	
+	@PostMapping("employees/speciality/{userId}")
+	public <T> ResponseEntity<?>  AddSpecialtyEmployee(@PathVariable("userId") int id,@RequestBody Speciality speciality) {
+		boolean flag;
+		
+		try {
+		flag  = employeeDelegate.saveSpeciality(id,speciality);
+		if(flag==true) {
+		return reponseGeneratorUtil.successResponse("SPECIALITY ADDED");		
+		}else {
+			return reponseGeneratorUtil.generateMessage("ERROR ADDING SPECIALITY");	
+		}
+		}catch(ApplicationException e) {
+			return reponseGeneratorUtil.errorResponse(e);	
 		}
 		
 	}

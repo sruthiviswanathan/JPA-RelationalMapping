@@ -19,5 +19,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 	 @Query("SELECT d FROM Employee d WHERE d.department = ?1")
 	 List<Employee> findByDepartment(@Param("department") Department department);
 	 
-	 
+	 @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Employee c WHERE c.id = :id")
+	 boolean existsById(@Param("id") int id);
 }

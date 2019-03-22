@@ -1,6 +1,5 @@
 package com.zilker.jpa.dao;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,13 +10,17 @@ import org.springframework.stereotype.Repository;
 import com.zilker.jpa.beans.Address;
 import com.zilker.jpa.beans.Department;
 import com.zilker.jpa.beans.Employee;
+import com.zilker.jpa.beans.EmployeeSpeciality;
 import com.zilker.jpa.beans.Speciality;
 import com.zilker.jpa.customException.ApplicationException;
 import com.zilker.jpa.customException.EmailAlreadyExistsException;
+import com.zilker.jpa.customException.EmployeeNotFoundException;
 import com.zilker.jpa.repository.AddressRepository;
 import com.zilker.jpa.repository.DepartmentRepository;
 import com.zilker.jpa.repository.EmployeeRepository;
+import com.zilker.jpa.repository.EmployeeSpecialityRepository;
 import com.zilker.jpa.repository.SpecialityRepository;
+
 
 
 @Repository
@@ -30,14 +33,16 @@ public class EmployeeDao {
 	@Autowired
 	private DepartmentRepository departmentRepository;
 	@Autowired
-	private SpecialityRepository specialtyRepository;
+	private SpecialityRepository specialityRepository;
+	@Autowired
+	private EmployeeSpecialityRepository empspecialityRepository;
+	
 	
 	public Employee registerEmployee(Employee employee)throws ApplicationException {
 		// TODO Auto-generated method stub
 		Employee employees = new Employee();
 		Address address = new Address();
 		Department department = new Department();
-		Speciality specialty = new Speciality();
 		boolean flag=false;
 		boolean emailExists=false;
 		try {
@@ -49,9 +54,6 @@ public class EmployeeDao {
 			if(flag) {
 				department=departmentRepository.findByName(employee.getDepartment().getName());
 				address = addressRepository.save(employee.getAddress());
-				System.out.println(employee.getSpecialityList());
-				specialty = specialtyRepository.findByName(employee.getSpecialityList());
-				System.out.println(specialty.getId());
 				employee.setDepartment(department);
 				employee.setAddress(address);	
 				employees = employeeRepository.save(employee);
@@ -60,12 +62,10 @@ public class EmployeeDao {
 			}
 			}
 			
-			}catch(EmailAlreadyExistsException e) {
-				System.out.println(e);
+			}catch(EmailAlreadyExistsException e) {	
 				throw e;
 			}
-			catch(Exception e) {
-				System.out.println(e);
+			catch(Exception e) {			
 				throw new ApplicationException("SQL_EXP","SQLException");
 			
 			}
@@ -91,10 +91,16 @@ public class EmployeeDao {
 		Optional <Employee> optionalEmployeeList;
 
 		try {
+			if(employeeRepository.existsById(id)) {
 			optionalEmployeeList = employeeRepository.findById(id);
 			optionalEmployeeList.ifPresent(employeeDetails::add);
-
-		} catch (Exception e) {
+			}else {
+				throw new EmployeeNotFoundException();
+			}
+		}catch (EmployeeNotFoundException e) {
+			throw e;
+		}
+		catch (Exception e) {
 			throw new ApplicationException("SQL_EXP","SQLException");
 		}
 		return employeeDetails;
@@ -108,6 +114,7 @@ public class EmployeeDao {
 		boolean flag=false;
 		boolean emailExists=false;
 		try {
+			if(employeeRepository.existsById(id)) {
 			emailExists = employeeRepository.existsByEmail(employee.getEmail()); 
 			if(emailExists) {
 				throw new EmailAlreadyExistsException();
@@ -120,12 +127,15 @@ public class EmployeeDao {
 				employee.setDepartment(department);
 				employee.setAddress(address);	
 				employees = employeeRepository.save(employee);
+			}
+			}
 			}else {
-				employees= null;
+				throw new EmployeeNotFoundException();
 			}
+			}catch (EmployeeNotFoundException e) {
+				throw e;
 			}
-			
-			}catch(EmailAlreadyExistsException e) {
+			catch(EmailAlreadyExistsException e) {
 				throw e;
 			}
 			catch(Exception e) {
@@ -135,17 +145,57 @@ public class EmployeeDao {
 		return employees;
 	}
 
-	public String DeleteEmployeeDetails(int id) throws SQLException {
+	public String DeleteEmployeeDetails(int id) throws ApplicationException {
 		// TODO Auto-generated method stub
 		String message = "";
 		try {
-		 employeeRepository.deleteById(id);
-		 message="Success";
-		}
-		catch(Exception e) {
+			if(employeeRepository.existsById(id)) {
+			employeeRepository.deleteById(id);
+			message="Success";
+			}else {
+				throw new EmployeeNotFoundException();
+			}
+		}catch (EmployeeNotFoundException e) {
 			throw e;
 		}
+		catch(Exception e) {
+			throw new ApplicationException("SQL_EXP","SQLException");
+		}
 		return message;
+	}
+
+	public boolean saveSpeciality(int id,Speciality speciality)throws ApplicationException {
+		// TODO Auto-generated method stub
+		EmployeeSpeciality employees = new EmployeeSpeciality();
+		int specialityId= 0;
+		boolean flag,status;
+		try {
+			if(employeeRepository.existsById(id)) {
+			employees.setEmployeeId(id);
+			flag = specialityRepository.existsByName(speciality.getName());
+			if(flag) {
+				specialityId = specialityRepository.findByName(speciality.getName());
+				employees.setSpecialityId(specialityId);
+				employees = empspecialityRepository.save(employees);
+				status=true;
+			}else {
+				speciality= specialityRepository.save(speciality);
+				specialityId = specialityRepository.findByName(speciality.getName());
+				employees.setSpecialityId(specialityId);
+				employees = empspecialityRepository.save(employees);
+				status=true;
+			}
+			}else {
+				
+				throw new EmployeeNotFoundException();
+			}
+			}catch (EmployeeNotFoundException e) {
+				throw e;
+			}catch(Exception e) {
+				throw new ApplicationException("SQL_EXP","SQLException");
+			
+			}
+		return status;
 	}
 
 }

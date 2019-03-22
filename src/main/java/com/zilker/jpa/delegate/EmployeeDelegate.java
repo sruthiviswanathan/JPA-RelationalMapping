@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zilker.jpa.beans.Employee;
+import com.zilker.jpa.beans.Speciality;
 import com.zilker.jpa.customException.ApplicationException;
 import com.zilker.jpa.customException.DepartmentNotFoundException;
 import com.zilker.jpa.customException.EmailAlreadyExistsException;
@@ -106,6 +107,21 @@ public class EmployeeDelegate {
 			throw new ApplicationException("Exception","Exception");
 		}
 		return message;
+	}
+
+	public boolean saveSpeciality(int id,Speciality speciality)throws ApplicationException {
+		// TODO Auto-generated method stub
+		boolean flag;
+		try {
+			flag = employeeDao.saveSpeciality(id,speciality);
+		
+		} catch (EmployeeNotFoundException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			throw new ApplicationException("Exception","Exception");
+		}
+		return flag;
 	}
 
 }
