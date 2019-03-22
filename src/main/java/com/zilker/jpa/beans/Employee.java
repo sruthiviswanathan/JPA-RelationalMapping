@@ -1,5 +1,6 @@
 package com.zilker.jpa.beans;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class Employee {
 	@JoinColumn(name="department_id")
 	private Department department;
 		
-	@OneToOne
+	@OneToOne(cascade=CascadeType.REMOVE)
 	@JoinColumn(name="address_id")
 	private Address address;
 	

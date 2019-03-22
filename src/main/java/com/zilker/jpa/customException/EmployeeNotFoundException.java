@@ -1,11 +1,11 @@
 package com.zilker.jpa.customException;
 
-public class DepartmentNotFoundException extends ApplicationException {
+public class EmployeeNotFoundException extends ApplicationException {
 
-	private static final long serialVersionUID = 6726229257950419234L;
-	private String errorCode="DEPT_ERR";
-	private String errorMessage="DEPARTMENT NOT FOUND";
-	
+
+	private static final long serialVersionUID = 6568758340443155217L;
+	private String errorCode="EMP_NOT_FOUND";
+	private String errorMessage="EMPLOYEE NOT FOUND";
 	public String getErrorCode() {
 		return errorCode;
 	}

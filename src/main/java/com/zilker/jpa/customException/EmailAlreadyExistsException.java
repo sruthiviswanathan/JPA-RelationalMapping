@@ -1,10 +1,11 @@
 package com.zilker.jpa.customException;
 
-public class DepartmentNotFoundException extends ApplicationException {
+public class EmailAlreadyExistsException extends ApplicationException {
 
-	private static final long serialVersionUID = 6726229257950419234L;
-	private String errorCode="DEPT_ERR";
-	private String errorMessage="DEPARTMENT NOT FOUND";
+
+	private static final long serialVersionUID = 5972875804720640581L;
+	private String errorCode="DUP_EMAIL";
+	private String errorMessage="EMAIL ALREADY EXISTS";
 	
 	public String getErrorCode() {
 		return errorCode;
